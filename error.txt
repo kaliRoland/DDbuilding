@@ -1,0 +1,24 @@
+(index):64 cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+(anonymous) @ (index):64
+products.php:380 Error: <path> attribute d: Expected path command, "M9 12d-4 0-4 4 0 4-4 …".
+main.js:429 searchInputExists: true
+main.js:430 categoryFilterExists: true
+main.js:431 priceFilterExists: true
+main.js:434 Shop page initialization block entered.
+main.js:316  GET http://localhost/api/products.php?action=get_all&max_price=20000000&sort=created_at_desc 404 (Not Found)
+getShopProducts @ main.js:316
+initialize @ main.js:436
+await in initialize
+(anonymous) @ main.js:466
+main.js:333 Failed to fetch shop products: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+getShopProducts @ main.js:333
+await in getShopProducts
+initialize @ main.js:436
+await in initialize
+(anonymous) @ main.js:466
+products.php:1 Access to fetch at 'https://ddbuildingtech.com/blog/wp-json/wp/v2/posts?per_page=10' from origin 'http://localhost' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+products.php:72  GET https://ddbuildingtech.com/blog/wp-json/wp/v2/posts?per_page=10 net::ERR_FAILED 404 (Not Found)
+fetchWordPressPosts @ products.php:72
+(anonymous) @ products.php:110
+products.php:79 WordPress Posts (direct): [{…}]

@@ -1,35 +1,45 @@
 <?php
-require_once '../config/database.php';
-
-header('Content-Type: application/json');
+declare(strict_types=1);
+require_once __DIR__ . '/_bootstrap.php';
 
 $action = $_GET['action'] ?? 'get_all';
 
-switch ($action) {
-    case 'get_all':
-        $gallery_items = [];
-        
-        // Check if title column exists, if not use empty string
-        $check_column = $conn->query("SHOW COLUMNS FROM gallery_items LIKE 'title'");
-        $has_title = $check_column && $check_column->num_rows > 0;
-        
-        if ($has_title) {
-            $result = $conn->query("SELECT id, title, description, youtube_url, image_path_1, image_path_2, image_path_3, image_path_4, image_path_5 FROM gallery_items ORDER BY created_at DESC");
-        } else {
-            $result = $conn->query("SELECT id, '' as title, description, youtube_url, image_path_1, image_path_2, image_path_3, image_path_4, image_path_5 FROM gallery_items ORDER BY created_at DESC");
-        }
-        
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $gallery_items[] = $row;
-            }
-            echo json_encode(['status' => 'success', 'items' => $gallery_items]);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Database query failed: ' . $conn->error]);
-        }
-        break;
-    default:
-        echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-        break;
+if ($action !== 'get_all') {
+    api_send(['status' => 'error', 'message' => 'Invalid action'], 400);
 }
-?>
+
+$result = $conn->query('SELECT * FROM gallery_items ORDER BY created_at DESC');
+if (!$result) {
+    api_send(['status' => 'error', 'message' => $conn->error], 500);
+}
+
+$items = [];
+while ($row = $result->fetch_assoc()) {
+    $imageUrls = [];
+
+    // Newer schema: image_path_1 ... image_path_5
+    for ($i = 1; $i <= 5; $i++) {
+        $key = 'image_path_' . $i;
+        if (!empty($row[$key])) {
+            $imageUrls[] = api_asset_url((string)$row[$key]);
+        }
+    }
+
+    // Legacy schema fallback: image_path
+    if (empty($imageUrls) && !empty($row['image_path'])) {
+        $imageUrls[] = api_asset_url((string)$row['image_path']);
+    }
+
+    $items[] = [
+        'id' => isset($row['id']) ? (int)$row['id'] : 0,
+        'title' => (string)($row['title'] ?? 'Installation'),
+        'description' => (string)($row['description'] ?? ''),
+        'youtube_url' => (string)($row['youtube_url'] ?? ''),
+        'image_urls' => $imageUrls,
+        'primary_image_url' => $imageUrls[0] ?? null,
+        'created_at' => (string)($row['created_at'] ?? ''),
+    ];
+}
+
+api_send(['status' => 'success', 'items' => $items]);
+

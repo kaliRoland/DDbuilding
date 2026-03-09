@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/session.php';
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
@@ -161,25 +161,23 @@ while ($row = $result->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Gallery</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/brand.css">
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5NVJVRF7');</script>
+    <!-- End Google Tag Manager -->
 </head>
 <body class="bg-slate-900 text-slate-100">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5NVJVRF7"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-slate-800 p-6">
-            <img src="../uploads/logo/logo.png" alt="DDbuildingTech Logo" class="h-8 mb-8">
-            <nav>
-                <a href="index.php" class="block py-2 px-4 rounded hover:bg-slate-700">Dashboard</a>
-                <a href="products.php" class="block py-2 px-4 rounded hover:bg-slate-700">Products</a>
-                <a href="add_product.php" class="block py-2 px-4 rounded hover:bg-slate-700" id="add-product-btn">Add New Product</a>
-                <a href="gallery.php" class="block py-2 px-4 rounded bg-amber-500 text-slate-900">Manage Gallery</a>
-                <a href="#" class="block py-2 px-4 rounded hover:bg-slate-700">Order Tracking</a>
-                <?php if ($_SESSION['admin_role'] === 'super'): ?>
-                    <a href="manage_users.php" class="block py-2 px-4 rounded hover:bg-slate-700">Manage Users</a>
-                <?php endif; ?>
-                <a href="logout.php" class="block py-2 px-4 rounded hover:bg-slate-700 mt-4">Logout</a>
-            </nav>
-        </aside>
+        <?php include 'includes/sidebar.php'; ?>
 
         <!-- Main Content -->
         <main class="flex-1 p-10">
@@ -330,3 +328,5 @@ while ($row = $result->fetch_assoc()) {
 
 </body>
 </html>
+
+

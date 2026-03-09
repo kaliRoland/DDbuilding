@@ -29,6 +29,25 @@
                                         </ul>
                                     </div>
                                     <div>
+                                        <h4 class="text-white font-semibold mb-4">Contact Us</h4>
+                                        <ul class="space-y-2 text-blue-300 text-sm">
+                                            <li><a href="tel:+2349161212301" class="hover:text-orange-400 transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+234 916 121 2301</a></li>
+                                            <li><a href="tel:+2348066113394" class="hover:text-orange-400 transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+234 806 611 3394</a></li>
+                                            <li><a href="mailto:sales@ddbuildingtech.com" class="hover:text-orange-400 transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>sales@ddbuildingtech.com</a></li>
+                                            <li><a href="mailto:support@ddbuildingtech.com" class="hover:text-orange-400 transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>support@ddbuildingtech.com</a></li>
+                                        </ul>
+                                        <p class="text-blue-200 leading-relaxed mt-4">
+                                            <h1><b>Enugu Office:</b></h1>
+                                            98,ogui Road,Opposite stadium gate,Enugu
+                                        </p>
+                                        <p class="text-blue-200 leading-relaxed mt-4">
+                                           <h1><b>Awka Office:</b></h1>
+                                            Elite plaza, Behind GIGM park Unizik junction,<br/>
+                                            Along Enugu-Onitsha Expressway,<br/>
+                                            Awka, Nigeria
+                                        </p>
+                                    </div>
+                                    <div>
                                         <h4 class="text-white font-semibold mb-4">Stay Connected</h4>
                                         <div class="flex gap-2 mb-4">
                                             <input type="email" placeholder="Enter email address" class="bg-blue-900 border border-blue-800 text-white text-sm rounded px-3 py-2 w-full focus:outline-none focus:border-orange-500">
@@ -37,8 +56,21 @@
                                             </button>
                                         </div>
                                         <div class="flex gap-4 text-blue-300">
-                                            <a href="#" class="hover:text-white transition"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-twitter"><path d="M22 4s-.7 2.1-2 3.4c1.6 1.4 3.3 4.9 3.3 4.9s-5.2-.1-7.2-2.3c-1.4 1.1-2.8 2.3-4.3 2.3s-2.8-1.2-4.3-2.3C5.1 12.4 0 12.3 0 12.3s1.7-3.6 3.3-4.9C1.3 6.1.7 4 .7 4s2.1.7 3.6 1.8C6.1 4.5 9.1 4 12 4s5.9.5 7.7 1.8C21.3 4.7 22 4 22 4z"/></svg></a>
-                                            <a href="#" class="hover:text-white transition"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+                                            <a href="https://www.linkedin.com/company/dd-buildingtech/" target="_blank" class="hover:text-orange-400 transition">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                                            </a>
+                                            <a href="https://www.instagram.com/ddbuildingtech?igsh=MW05bm9pMGExdm50Yw==" target="_blank" class="hover:text-orange-400 transition">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                                            </a>
+                                            <a href="https://www.facebook.com/share/1ALMJGomiq/" target="_blank" class="hover:text-orange-400 transition">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                                            </a>
+                                            <a href="https://youtube.com/@ddbuildingtech?si=lSbBjA-0l4ZGlCWf" target="_blank" class="hover:text-orange-400 transition">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-youtube"><path d="M2.5 17.592a4.93 4.93 0 0 1-.502-1.464c-.097-.732-.095-2.007-.095-2.007S2 9.07 2 7.824a4.898 4.898 0 0 1 .494-1.455C3.033 5.4 4.09 4.904 6.702 4.904h.023c2.617 0 5.234 0 7.852 0h.023c2.617 0 3.674.502 4.204 1.465a4.93 4.93 0 0 1 .502 1.464c.097.732.095 2.007.095 2.007s.002 1.275.002 2.52c0 1.246-.002 2.52-.002 2.52s-.002 1.275-.095 2.007a4.93 4.93 0 0 1-.502 1.464c-.53.963-1.587 1.465-4.204 1.465h-.023c-2.617 0-5.234 0-7.852 0h-.023c-2.617 0-3.674-.502-4.204-1.465Z"/><path d="m10.875 8.922 4.995 2.503-4.995 2.503V8.922Z"/></svg>
+                                            </a>
+                                            <a href="https://www.tiktok.com/@ddbuildingtech?_r=1&_t=ZS-9252xey2g88" target="_blank" class="hover:text-orange-400 transition">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tiktok"><path d="M9 12d-4 0-4 4 0 4-4 0c0-4 4-4 4-4z"/><path d="M12 9v12"/><path d="M20 9V12A4 4 0 0 1 16 16"/><path d="M16 12h4"/></svg>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

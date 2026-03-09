@@ -1,5 +1,0 @@
-chat.js:66 Uncaught TypeError: Cannot read properties of null (reading 'toLowerCase')
-    at chat.js:66:51
-    at Array.filter (<anonymous>)
-    at recommendProducts (chat.js:64:42)
-    at chat.js:99:30

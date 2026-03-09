@@ -1,82 +1,76 @@
 <?php
-session_start();
+declare(strict_types=1);
+require_once __DIR__ . '/_bootstrap.php';
 
-require_once '../config/database.php';
-require_once '../includes/functions.php';
+$action = $_GET['action'] ?? 'get';
 
-header('Content-Type: application/json');
-
-// Initialize cart if it doesn't exist
-if (!isset($_SESSION['cart'])) {
+if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-$action = $_GET['action'] ?? '';
-
-switch ($action) {
-    case 'add':
-        $id = $_POST['id'] ?? null;
-        if ($id) {
-            $stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
-            $stmt->bind_param("i", $id);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $product = $result->fetch_assoc();
-
-            if ($product) {
-                log_activity($conn, null, 'add_to_cart');
-                $found = false;
-                foreach ($_SESSION['cart'] as &$item) {
-                    if ($item['id'] == $id) {
-                        $item['quantity']++;
-                        $found = true;
-                        break;
-                    }
-                }
-                if (!$found) {
-                    $product['quantity'] = 1;
-                    $_SESSION['cart'][] = $product;
-                }
-            }
-        }
-        break;
-
-    case 'remove':
-        $id = $_POST['id'] ?? null;
-        if ($id) {
-            log_activity($conn, null, 'remove_from_cart');
-            $_SESSION['cart'] = array_filter($_SESSION['cart'], function($item) use ($id) {
-                return $item['id'] != $id;
-            });
-        }
-        break;
-
-    case 'update':
-        $id = $_POST['id'] ?? null;
-        $change = $_POST['change'] ?? null;
-        if ($id && $change) {
-            log_activity($conn, null, 'update_cart_quantity');
-            foreach ($_SESSION['cart'] as &$item) {
-                if ($item['id'] == $id) {
-                    $item['quantity'] += $change;
-                    if ($item['quantity'] <= 0) {
-                        // Mark for removal
-                        $item['quantity'] = 0;
-                    }
-                    break;
-                }
-            }
-            // Remove items with 0 quantity
-            $_SESSION['cart'] = array_filter($_SESSION['cart'], function($item) {
-                return $item['quantity'] > 0;
-            });
-        }
-        break;
-
-    case 'get':
-    default:
-        // The cart is returned at the end
-        break;
+function cart_response(): void
+{
+    $items = array_values($_SESSION['cart'] ?? []);
+    api_send($items);
 }
 
-echo json_encode(array_values($_SESSION['cart']));
+if ($action === 'get') {
+    cart_response();
+}
+
+$id = (int)($_POST['id'] ?? 0);
+if ($id <= 0) {
+    api_send(['status' => 'error', 'message' => 'Invalid product ID'], 400);
+}
+
+if ($action === 'add') {
+    if (isset($_SESSION['cart'][$id])) {
+        $_SESSION['cart'][$id]['quantity'] = (int)$_SESSION['cart'][$id]['quantity'] + 1;
+        cart_response();
+    }
+
+    $stmt = $conn->prepare('SELECT id, name, price, image_main FROM products WHERE id = ? LIMIT 1');
+    $stmt->bind_param('i', $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $product = $result ? $result->fetch_assoc() : null;
+    if (!$product) {
+        api_send(['status' => 'error', 'message' => 'Product not found'], 404);
+    }
+
+    $_SESSION['cart'][$id] = [
+        'id' => (int)$product['id'],
+        'name' => (string)$product['name'],
+        'price' => (float)$product['price'],
+        'image_main' => (string)($product['image_main'] ?? ''),
+        'quantity' => 1
+    ];
+    cart_response();
+}
+
+if ($action === 'remove') {
+    unset($_SESSION['cart'][$id]);
+    cart_response();
+}
+
+if ($action === 'update') {
+    $change = (int)($_POST['change'] ?? 0);
+    if (!isset($_SESSION['cart'][$id])) {
+        cart_response();
+    }
+    $next = (int)$_SESSION['cart'][$id]['quantity'] + $change;
+    if ($next <= 0) {
+        unset($_SESSION['cart'][$id]);
+    } else {
+        $_SESSION['cart'][$id]['quantity'] = $next;
+    }
+    cart_response();
+}
+
+if ($action === 'clear') {
+    $_SESSION['cart'] = [];
+    cart_response();
+}
+
+api_send(['status' => 'error', 'message' => 'Invalid action'], 400);
+

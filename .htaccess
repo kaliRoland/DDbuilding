@@ -1,0 +1,7 @@
+<Files ".env">
+    Require all denied
+</Files>
+
+RewriteEngine On
+
+RewriteRule ^sitemap\.xml$ sitemap.php [L,NC]

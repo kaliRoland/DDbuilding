@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b2a4a">
+  <title>DDbuildingTech Mobile</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="../uploads/logo/logo.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <img src="../uploads/logo/logo.png" alt="DDbuildingTech" class="logo">
+    <div>
+      <h1>DDbuildingTech Mobile</h1>
+      <p>Products, Support, Installation</p>
+    </div>
+  </header>
+
+  <main class="content">
+    <section class="card">
+      <h2>Connection</h2>
+      <label for="apiBase">API Base URL</label>
+      <input id="apiBase" type="text" value="../api" />
+      <small>Example: <code>https://yourdomain.com/dd4/api</code></small>
+      <button id="saveApi">Save API URL</button>
+      <a href="../index.php" class="link-btn">Open Website</a>
+    </section>
+
+    <section class="card">
+      <h2>Featured Products</h2>
+      <button id="refreshProducts">Refresh</button>
+      <div id="products" class="products"></div>
+    </section>
+
+    <section class="card">
+      <h2>Customer Support</h2>
+      <form id="supportForm">
+        <input name="contact_name" placeholder="Your name" required>
+        <input name="contact_email" type="email" placeholder="Email">
+        <input name="contact_phone" placeholder="Phone number">
+        <input name="subject" placeholder="Subject" required>
+        <textarea name="message" rows="4" placeholder="Describe your issue" required></textarea>
+        <button type="submit">Submit Support Ticket</button>
+      </form>
+      <p id="supportMsg" class="msg"></p>
+    </section>
+
+    <section class="card">
+      <h2>Installation Request</h2>
+      <form id="installForm">
+        <input name="contact_name" placeholder="Your name" required>
+        <input name="contact_email" type="email" placeholder="Email">
+        <input name="contact_phone" placeholder="Phone number" required>
+        <input name="location" placeholder="Installation location" required>
+        <input name="system_size" placeholder="Required system size (e.g. 5kVA)" required>
+        <input name="preferred_visit_date" type="date">
+        <textarea name="notes" rows="4" placeholder="Notes"></textarea>
+        <button type="submit">Submit Installation Request</button>
+      </form>
+      <p id="installMsg" class="msg"></p>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

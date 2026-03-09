@@ -25,8 +25,8 @@
                 <!-- Price Range -->
                 <div class="mb-6">
                     <label for="price-filter" class="block text-sm font-medium text-blue-200 mb-2">Max Price</label>
-                    <input type="range" id="price-filter" min="0" max="2000" value="2000" class="w-full h-2 bg-blue-700 rounded-lg appearance-none cursor-pointer">
-                    <div class="text-right text-sm text-blue-200 mt-1" id="price-value">NGN2000</div>
+                    <input type="range" id="price-filter" min="0" max="20000000" value="20000000" class="w-full h-2 bg-blue-700 rounded-lg appearance-none cursor-pointer">
+                    <div class="text-right text-sm text-blue-200 mt-1" id="price-value">NGN20000000</div>
                 </div>
 
                 <!-- Sorting -->

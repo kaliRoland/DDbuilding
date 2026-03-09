@@ -1,0 +1,5 @@
+the app icon should be the logo.
+ remove the profile tab,(no customer login yet).  
+ instead of the add to cart icon, replace the icon with a add to cart button that syncs with the cart tab
+ all products are not displaying, when i upload a product in the website backend will it appear in the app too
+ is the payment gateway functional in the app 

@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/session.php';
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
@@ -24,46 +24,59 @@ log_activity($conn, $_SESSION['admin_id'], 'view_manage_users');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Users</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/brand.css">
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5NVJVRF7');</script>
+    <!-- End Google Tag Manager -->
 </head>
 <body class="bg-slate-900 text-slate-100">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5NVJVRF7"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-slate-800 p-6">
-            <img src="../uploads/logo/logo.png" alt="DDbuildingTech Logo" class="h-8 mb-8">
-            <nav>
-                <a href="index.php" class="block py-2 px-4 rounded hover:bg-slate-700">Dashboard</a>
-                <a href="products.php" class="block py-2 px-4 rounded hover:bg-slate-700">Products</a>
-                <a href="add_product.php" class="block py-2 px-4 rounded hover:bg-slate-700">Add New Product</a>
-                <a href="#" class="block py-2 px-4 rounded hover:bg-slate-700">Order Tracking</a>
-                <a href="manage_users.php" class="block py-2 px-4 rounded bg-amber-500 text-slate-900">Manage Users</a>
-                <a href="logout.php" class="block py-2 px-4 rounded hover:bg-slate-700 mt-4">Logout</a>
-            </nav>
-        </aside>
+        <?php include 'includes/sidebar.php'; ?>
 
         <!-- Main Content -->
         <main class="flex-1 p-10">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-bold text-white">Manage Users</h1>
-                <button id="add-user-btn" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2 px-4 rounded transition">
-                    Add New User
-                </button>
+            <div class="bg-slate-800 rounded-xl p-6 mb-6 border border-white/10">
+                <p class="text-slate-400 text-sm uppercase tracking-wide">Administration</p>
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-2">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white">Manage Users</h1>
+                        <p class="text-slate-400 mt-1">Create, edit, and control admin access roles.</p>
+                    </div>
+                    <button id="add-user-btn" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2 px-4 rounded transition">
+                        Add New User
+                    </button>
+                </div>
             </div>
 
-            <div class="bg-slate-800 rounded-lg overflow-hidden">
-                <table class="min-w-full">
-                    <thead class="bg-slate-700">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Username</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Created At</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-slate-300 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-tbody" class="divide-y divide-slate-700">
-                        <!-- Users will be loaded here by JavaScript -->
-                    </tbody>
-                </table>
+            <div class="bg-slate-800 rounded-xl overflow-hidden border border-white/10">
+                <div class="px-6 py-4 border-b border-white/10">
+                    <h2 class="text-lg font-semibold">User Directory</h2>
+                    <p class="text-slate-400 text-sm">All registered admin and super admin accounts.</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-slate-700/80">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Username</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Created At</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody" class="divide-y divide-slate-700">
+                            <!-- Users will be loaded here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>
@@ -109,3 +122,6 @@ log_activity($conn, $_SESSION['admin_id'], 'view_manage_users');
     <script src="js/users.js"></script>
 </body>
 </html>
+
+
+

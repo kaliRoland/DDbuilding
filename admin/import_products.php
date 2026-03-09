@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/session.php';
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
@@ -97,8 +97,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Import Products</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/brand.css">
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5NVJVRF7');</script>
+    <!-- End Google Tag Manager -->
 </head>
 <body class="bg-slate-900 text-slate-100">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5NVJVRF7"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <div class="flex min-h-screen">
         <!-- Sidebar -->
@@ -107,8 +119,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
             <nav>
                 <a href="index.php" class="block py-2 px-4 rounded hover:bg-slate-700">Dashboard</a>
                 <a href="products.php" class="block py-2 px-4 rounded bg-amber-500 text-slate-900">Products</a>
+                <a href="manage_slides.php" class="block py-2 px-4 rounded hover:bg-slate-700">Hero Slides</a>
+                <a href="add_product.php" class="block py-2 px-4 rounded hover:bg-slate-700" id="add-product-btn">Add New Product</a>
+                <a href="gallery.php" class="block py-2 px-4 rounded hover:bg-slate-700">Manage Gallery</a>
+                <a href="site_settings.php" class="block py-2 px-4 rounded hover:bg-slate-700">Site Settings</a>
+                <a href="order_management.php" class="block py-2 px-4 rounded hover:bg-slate-700">Order Management</a>
+                <a href="https://ddbuildingtech.com/blog" target="_blank" class="block py-2 px-4 rounded hover:bg-slate-700">Blog Management</a>
                 <?php if ($_SESSION['admin_role'] === 'super'): ?>
                     <a href="manage_users.php" class="block py-2 px-4 rounded hover:bg-slate-700">Manage Users</a>
+                    <a href="backup_restore.php" class="block py-2 px-4 rounded hover:bg-slate-700">Backup & Restore</a>
                 <?php endif; ?>
                 <a href="logout.php" class="block py-2 px-4 rounded hover:bg-slate-700 mt-4">Logout</a>
             </nav>
@@ -152,3 +171,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
     </div>
 </body>
 </html>
+
+
+

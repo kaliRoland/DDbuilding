@@ -32,7 +32,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearFiltersBtn = document.getElementById('clear-filters-btn');
     const paginationContainer = document.getElementById('pagination');
 
+    function trackMetaEvent(eventName, payload) {
+        if (typeof fbq === 'function') {
+            fbq('track', eventName, payload || {});
+        }
+    }
+
     // --- Rendering (Common) ---
+    function renderRating(product) {
+        const avgRating = parseFloat(product.avg_rating || 0);
+        const reviewCount = parseInt(product.review_count || 0, 10);
+        const roundedRating = Math.round(avgRating);
+        const stars = Array.from({ length: 5 }, (_, i) => (i < roundedRating ? '&#9733;' : '&#9734;')).join('');
+        const ratingText = reviewCount > 0 ? `${avgRating.toFixed(1)} (${reviewCount})` : 'No reviews';
+        return `
+            <div class="flex items-center gap-2 text-sm text-blue-200 mb-3">
+                <div class="text-amber-400 tracking-wide">${stars}</div>
+                <span>${ratingText}</span>
+            </div>
+        `;
+    }
+
     function renderProductCard(product) {
         return `
             <div class="group bg-blue-900 rounded-xl border border-blue-800 overflow-hidden hover:border-orange-500/50 transition duration-300 flex flex-col">
@@ -48,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 class="text-lg font-bold text-white mb-1 group-hover:text-orange-400 transition">
                         <a href="product.php?id=${product.id}">${product.name}</a>
                     </h3>
-                    <p class="text-2xl font-bold text-blue-200 mb-4">NGN${parseFloat(product.price).toFixed(2)}</p>
+                    ${renderRating(product)}
+                    <p class="text-2xl font-bold text-blue-200 mb-4">${parseFloat(product.price).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' })}</p>
                     <button 
                         onclick="addToCart(${product.id})"
                         class="mt-auto w-full bg-blue-800 hover:bg-orange-500 hover:text-white text-white font-semibold py-3 rounded transition duration-300 flex items-center justify-center gap-2"
@@ -70,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cartCount.innerText = cart.reduce((acc, item) => acc + item.quantity, 0);
         
         const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-        cartSubtotal.innerText = 'NGN' + total.toFixed(2);
+        cartSubtotal.innerText = total.toLocaleString('en-NG', { style: 'currency', currency: 'NGN' });
 
         if (cart.length === 0) {
             emptyCartMessage.classList.remove('hidden');
@@ -90,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                             </button>
                         </div>
-                        <p class="text-orange-400 font-bold text-sm mt-1">NGN${parseFloat(item.price).toFixed(2)}</p>
+                        <p class="text-orange-400 font-bold text-sm mt-1">${parseFloat(item.price).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' })}</p>
                         <div class="flex items-center mt-3 gap-3">
                             <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 rounded bg-blue-800 hover:bg-blue-700 flex items-center justify-center text-white text-xs">-</button>
                             <span class="text-sm font-medium text-white w-4 text-center">${item.quantity}</span>
@@ -117,6 +138,20 @@ document.addEventListener('DOMContentLoaded', () => {
             body: data
         });
         await updateCart();
+        const addedItem = cart.find(item => String(item.id) === String(id));
+        if (addedItem) {
+            trackMetaEvent('AddToCart', {
+                content_ids: [String(addedItem.id)],
+                content_type: 'product',
+                contents: [{
+                    id: String(addedItem.id),
+                    quantity: 1,
+                    item_price: Number(addedItem.price)
+                }],
+                value: Number(addedItem.price),
+                currency: 'NGN'
+            });
+        }
         openCart();
     };
 
@@ -165,13 +200,54 @@ document.addEventListener('DOMContentLoaded', () => {
     closeCartButton.addEventListener('click', closeCart);
     cartBackdrop.addEventListener('click', closeCart);
     
+    // Checkout: go to Paystack checkout page
+    window.checkoutToWhatsApp = async function() {
+        try {
+            if (checkoutButton && checkoutButton.disabled) {
+                console.log('checkout: button is disabled');
+                return;
+            }
+
+            let currentCart = cart && cart.length ? cart : null;
+            if (!currentCart) {
+                const resp = await fetch('api/cart.php?action=get');
+                currentCart = await resp.json();
+            }
+            if (!currentCart || currentCart.length === 0) {
+                alert('Your cart is empty.');
+                return;
+            }
+
+            window.location.href = 'checkout.php';
+        } catch (err) {
+            console.error('checkout failed', err);
+            alert('Unable to start checkout. Please try again.');
+        }
+    };
+
+    if (checkoutButton) {
+        // Primary listener
+        checkoutButton.addEventListener('click', () => {
+            console.log('checkout button clicked (direct)');
+            window.checkoutToWhatsApp();
+        });
+    }
+
+    // Delegated listener for cases where the button is inside a dynamic container
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest && e.target.closest('#checkout-button');
+        if (btn) {
+            console.log('checkout button clicked (delegated)');
+            window.checkoutToWhatsApp();
+        }
+    });
     mobileMenuButton.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');
     });
 
     // --- WordPress Blog Integration ---
     // IMPORTANT: Replace with your actual WordPress REST API URL
-    const WORDPRESS_API_URL = 'http://localhost/wordpress/wp-json/wp/v2'; 
+    const WORDPRESS_API_URL = 'https://ddbuildingtech.com/blog/wp-json/wp/v2'; 
 
     function renderBlogPostCard(post) {
         // Extract featured image URL, or use a placeholder
@@ -209,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Fetch latest 3 posts, including featured media and author info
-            const response = await fetch(`${WORDPRESS_API_URL}/posts?_embed&per_page=3`);
+            const response = await fetch(`api/blog.php?per_page=3`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -228,16 +304,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Shop Page Specific Logic ---
-    async function getShopProducts() {
+    async function getShopProducts(page = 1) {
         const search = searchInput ? searchInput.value : '';
         const category = categoryFilterShop ? categoryFilterShop.value : '';
         const maxPrice = priceFilter ? priceFilter.value : '';
         const sort = sortFilter ? sortFilter.value : 'created_at_desc';
         
-        const apiUrl = '/DD/api/products.php'; 
+        const apiUrl = 'api/products.php';
 
-        const url = new URL(apiUrl, window.location.origin);
+        // Resolve API path relative to the current document directory to avoid incorrect root paths
+        const docPath = window.location.pathname;
+        const docBase = docPath.endsWith('/') ? docPath : docPath.substring(0, docPath.lastIndexOf('/') + 1);
+        const url = new URL(apiUrl, window.location.origin + docBase);
         url.searchParams.append('action', 'get_all');
+        url.searchParams.append('page', page);
         if (search) url.searchParams.append('search', search);
         if (category) url.searchParams.append('category', category);
         if (maxPrice) url.searchParams.append('max_price', maxPrice);
@@ -287,8 +367,9 @@ document.addEventListener('DOMContentLoaded', () => {
         while (categoryFilterShop.options.length > 1) {
             categoryFilterShop.remove(1);
         }
+        // categories expected as array of {id, name, parent_id}
         categories.forEach(category => {
-            const option = new Option(category, category);
+            const option = new Option(category.name, category.id);
             categoryFilterShop.add(option);
         });
         categoryFilterShop.value = currentCategory; // Restore previous selection
@@ -299,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (categoryFilterShop) categoryFilterShop.value = '';
         if (priceFilter) {
             priceFilter.value = priceFilter.max;
-            if (priceValue) priceValue.textContent = `NGN${priceFilter.max}`;
+            if (priceValue) priceValue.textContent = parseFloat(priceFilter.max).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' });
         }
         if (sortFilter) sortFilter.value = 'created_at_desc';
         currentPage = 1;
@@ -332,8 +413,17 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchAndRenderHomepageBlogPosts();
 
         // Check if it's the shop page (products.php)
-        if (document.getElementById('search-input') && document.getElementById('category-filter') && document.getElementById('price-filter')) {
-            if (priceValue && priceFilter) priceValue.textContent = `NGN${priceFilter.value}`;
+        const searchInputExists = document.getElementById('search-input');
+        const categoryFilterExists = document.getElementById('category-filter');
+        const priceFilterExists = document.getElementById('price-filter');
+
+        console.log('searchInputExists:', !!searchInputExists);
+        console.log('categoryFilterExists:', !!categoryFilterExists);
+        console.log('priceFilterExists:', !!priceFilterExists);
+
+        if (searchInputExists && categoryFilterExists && priceFilterExists) {
+            console.log("Shop page initialization block entered.");
+            if (priceValue && priceFilter) priceValue.textContent = parseFloat(priceFilter.value).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' });
             getShopProducts();
 
             // Event Listeners for Shop Page
@@ -348,7 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (priceFilter) {
                 priceFilter.addEventListener('input', () => {
-                    if (priceValue) priceValue.textContent = `NGN${priceFilter.value}`;
+                    if (priceValue) priceValue.textContent = parseFloat(priceFilter.value).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' });
                 });
                 priceFilter.addEventListener('change', () => { currentPage = 1; getShopProducts(); });
             }
@@ -362,4 +452,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initialize();
+
+    // --- Image Slider Logic (Homepage) ---
+    const slides = document.querySelectorAll('#hero-slider .slide');
+    const dotsContainer = document.getElementById('slider-dots');
+    const dots = document.querySelectorAll('#slider-dots .dot');
+    let currentSlide = 0;
+    let slideInterval;
+
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.remove('opacity-100');
+            slide.classList.add('opacity-0');
+            if (i === index) {
+                slide.classList.add('opacity-100');
+            }
+        });
+        dots.forEach((dot, i) => {
+            dot.classList.remove('bg-white', 'opacity-100');
+            dot.classList.add('bg-white', 'opacity-50');
+            if (i === index) {
+                dot.classList.remove('opacity-50');
+                dot.classList.add('opacity-100');
+            }
+        });
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    function startSlider() {
+        showSlide(currentSlide); // Show initial slide
+        slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+    }
+
+    function pauseSlider() {
+        clearInterval(slideInterval);
+    }
+
+    function resumeSlider() {
+        startSlider();
+    }
+
+    // Add event listeners to dots
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            pauseSlider();
+            currentSlide = index;
+            showSlide(currentSlide);
+            resumeSlider();
+        });
+    });
+
+    // Start the slider if slides exist on the page
+    if (slides.length > 0) {
+        startSlider();
+        // Pause slider on hover
+        const heroSlider = document.getElementById('hero-slider');
+        if (heroSlider) {
+            heroSlider.addEventListener('mouseenter', pauseSlider);
+            heroSlider.addEventListener('mouseleave', resumeSlider);
+        }
+    }
 });

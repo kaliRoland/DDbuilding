@@ -1,0 +1,257 @@
+DDbuildingtech Deployment Guide (Live Server + Mobile Release)
+=============================================================
+
+This guide covers:
+1) Deploying the PHP backend to live hosting
+2) Configuring database and required tables
+3) Pointing Flutter app to live API
+4) Building signed Android release
+5) Optional iOS release flow
+6) Post-deploy checks and troubleshooting
+
+------------------------------------------------------------
+SECTION 1: PREPARE BEFORE DEPLOYMENT
+------------------------------------------------------------
+
+1.1 Confirm local project paths
+- Web backend root: c:\xampp\htdocs\dd4
+- Mobile app root: c:\xampp\htdocs\dd4\mobile_app
+
+1.2 Confirm production domain/API target
+Example:
+- Website: https://yourdomain.com/dd4/
+- API base: https://yourdomain.com/dd4/api
+
+1.3 Files with important production changes already made
+- admin/includes/session.php (admin session cookie fix)
+- includes/security_headers.php (CSP fix for GTM)
+- includes/functions.php (safe activity logging)
+- mobile_app (UI + icon + preloader updates)
+
+------------------------------------------------------------
+SECTION 2: DEPLOY PHP BACKEND TO LIVE HOSTING
+------------------------------------------------------------
+
+2.1 Upload backend files
+Upload the dd4 project files to your hosting public directory (for example public_html/dd4):
+- api/
+- admin/
+- includes/
+- config/
+- uploads/
+- all required .php files in dd4 root
+
+Do NOT upload these if not needed:
+- mobile_app/build/
+- local logs/debug artifacts
+
+2.2 Configure database credentials
+Edit on live server:
+- config/database.php
+Set:
+- $db_host
+- $db_username
+- $db_password
+- $db_name
+
+2.3 Import database
+- Use phpMyAdmin or MySQL CLI on host.
+- Import your production SQL dump.
+- Ensure tables used by app/admin exist: products, users, admins, orders, categories, product_reviews, user_activity_log, etc.
+
+2.4 Run/create missing tables/migrations (if needed)
+From browser (replace domain path):
+- https://yourdomain.com/dd4/create_mobile_tables.php
+- https://yourdomain.com/dd4/create_product_reviews_table.php
+- Any other migration scripts you rely on.
+
+2.5 Fix activity log schema on live (important if old schema exists)
+Run this SQL in live database:
+
+UPDATE user_activity_log
+SET id = (
+  SELECT next_id
+  FROM (
+    SELECT COALESCE(MAX(id),0) + 1 AS next_id
+    FROM user_activity_log
+  ) t
+)
+WHERE id = 0;
+
+ALTER TABLE user_activity_log
+MODIFY id INT(11) NOT NULL AUTO_INCREMENT;
+
+2.6 Validate backend endpoints
+Open in browser:
+- https://yourdomain.com/dd4/api/products.php?action=get_all
+Expected: JSON response with status/products (not HTML fatal error).
+
+2.7 Validate admin login
+- Open: https://yourdomain.com/dd4/admin/login.php
+- Login and confirm dashboard opens without redirect loop.
+
+------------------------------------------------------------
+SECTION 3: SERVER SECURITY + NETWORK CHECKS
+------------------------------------------------------------
+
+3.1 HTTPS
+- Install SSL certificate and force HTTPS.
+- Ensure site works at https://...
+
+3.2 File/folder permissions
+- Typical safe defaults:
+  - folders: 755
+  - files: 644
+- Ensure uploads folders are writable where needed.
+
+3.3 CSP/GTM validation
+- Open browser console on admin login page.
+- Confirm no CSP block for:
+  - https://www.googletagmanager.com
+
+------------------------------------------------------------
+SECTION 4: POINT FLUTTER APP TO LIVE API
+------------------------------------------------------------
+
+IMPORTANT:
+Do not hardcode local IP for production.
+Use --dart-define at build/run time.
+
+4.1 Test run against live API
+From mobile_app folder:
+
+flutter run --dart-define=API_BASE_URL=https://yourdomain.com/dd4/api
+
+4.2 Verify app behavior
+- Home products load
+- Categories/Search load
+- Add to Cart updates Cart tab
+- Checkout submits order
+- Support/Solar forms submit successfully
+
+------------------------------------------------------------
+SECTION 5: ANDROID RELEASE BUILD (PRODUCTION)
+------------------------------------------------------------
+
+5.1 Create upload keystore (one-time)
+Run in terminal:
+
+keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+
+Store this keystore safely (backup).
+
+5.2 Place keystore
+- Put upload-keystore.jks in mobile_app/android/app/ (or secure path outside repo).
+
+5.3 Create key.properties
+File: mobile_app/android/key.properties
+
+Content example:
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=upload
+storeFile=upload-keystore.jks
+
+5.4 Ensure android/app/build.gradle(.kts) uses key.properties
+- Confirm release signingConfig is wired.
+
+5.5 Build release AAB (recommended for Play Store)
+From mobile_app folder:
+
+flutter build appbundle --release --dart-define=API_BASE_URL=https://yourdomain.com/dd4/api
+
+Output:
+- build/app/outputs/bundle/release/app-release.aab
+
+5.6 Optional APK build
+
+flutter build apk --release --dart-define=API_BASE_URL=https://yourdomain.com/dd4/api
+
+Output:
+- build/app/outputs/flutter-apk/app-release.apk
+
+5.7 Publish to Google Play
+- Create app in Play Console
+- Upload app-release.aab
+- Complete store listing, content rating, privacy policy, testing tracks
+- Roll out production when ready
+
+------------------------------------------------------------
+SECTION 6: iOS RELEASE (OPTIONAL)
+------------------------------------------------------------
+
+6.1 Prerequisites
+- macOS + Xcode
+- Apple Developer account
+- Bundle ID, signing certificates, provisioning profiles
+
+6.2 Build IPA
+
+flutter build ipa --release --dart-define=API_BASE_URL=https://yourdomain.com/dd4/api
+
+6.3 Publish
+- Open Xcode Organizer / Transporter
+- Upload IPA to App Store Connect
+- Configure TestFlight / App Store release
+
+------------------------------------------------------------
+SECTION 7: POST-DEPLOY VERIFICATION CHECKLIST
+------------------------------------------------------------
+
+Backend checks:
+[ ] /dd4/api/products.php?action=get_all returns JSON
+[ ] No PHP fatal in server logs
+[ ] Admin login redirects to dashboard successfully
+[ ] Product uploads from admin appear via API
+
+Mobile checks:
+[ ] Preloader shows pulsating logo on blue background
+[ ] Caption shows: "Power the grid. Secure the perimeter"
+[ ] Launcher icon has white background
+[ ] Profile tab removed
+[ ] Add to Cart button visible on product cards
+[ ] Cart updates from Home/Categories/Search
+[ ] Checkout submits order
+
+------------------------------------------------------------
+SECTION 8: COMMON ISSUES AND FIXES
+------------------------------------------------------------
+
+Issue: App timeout to API
+- Cause: Wrong API URL / server down / firewall
+- Fix: Confirm API URL works in phone browser and server is up.
+
+Issue: FormatException with <br />
+- Cause: PHP warning/fatal HTML instead of JSON
+- Fix: Check PHP error log, fix DB/table errors, return clean JSON.
+
+Issue: Admin login loops back to login
+- Cause: Session cookie collision/mis-scope
+- Fix: Keep admin/includes/session.php dedicated admin cookie config.
+
+Issue: New products not all shown
+- Cause: API pagination and app reading only first page
+- Fix: Current app now fetches all pages in ApiClient.fetchProducts.
+
+Issue: Payment gateway expected in app
+- Current status: Checkout submits orders, online payment not wired yet.
+- Next step: integrate paystack endpoint + webview/native flow + callback verification.
+
+------------------------------------------------------------
+SECTION 9: WHAT TO DEPLOY FROM THIS PROJECT
+------------------------------------------------------------
+
+Backend critical files:
+- admin/includes/session.php
+- includes/security_headers.php
+- includes/functions.php
+- admin/login.php
+- admin/index.php
+- all API files in /api and supporting backend files
+
+Mobile project:
+- Entire mobile_app folder (for building APK/AAB)
+
+------------------------------------------------------------
+END
+------------------------------------------------------------

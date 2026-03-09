@@ -1,0 +1,131 @@
+:root {
+  --brand-blue-900: #042a57;
+  --brand-blue-800: #0a3c78;
+  --brand-blue-700: #1457a6;
+  --brand-blue-600: #1b6fd1;
+  --brand-yellow-500: #ffc107;
+  --brand-yellow-600: #f4b400;
+  --brand-text: #eaf2ff;
+  --brand-muted: #b8c7dd;
+}
+
+body.bg-slate-900 {
+  background: radial-gradient(circle at 10% 10%, #0d4f9b 0, var(--brand-blue-900) 34%, #031f41 100%);
+  color: var(--brand-text);
+}
+
+.bg-slate-800 {
+  background-color: var(--brand-blue-800) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+}
+
+.bg-slate-700 {
+  background-color: var(--brand-blue-700) !important;
+}
+
+.hover\:bg-slate-700:hover {
+  background-color: var(--brand-blue-600) !important;
+}
+
+.hover\:bg-slate-600:hover {
+  background-color: var(--brand-blue-600) !important;
+}
+
+.text-slate-100,
+.text-white {
+  color: var(--brand-text) !important;
+}
+
+.text-slate-400 {
+  color: var(--brand-muted) !important;
+}
+
+.text-slate-500 {
+  color: #91a7c6 !important;
+}
+
+.bg-amber-500 {
+  background-color: var(--brand-yellow-500) !important;
+}
+
+.hover\:bg-amber-600:hover {
+  background-color: var(--brand-yellow-600) !important;
+}
+
+.text-slate-900 {
+  color: #1b2635 !important;
+}
+
+a.block.py-2.px-4.rounded {
+  border-radius: 12px;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
+}
+
+a.block.py-2.px-4.rounded:hover {
+  transform: translateX(2px);
+}
+
+table.min-w-full {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+table.min-w-full thead {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+table.min-w-full th,
+table.min-w-full td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+input,
+select,
+textarea {
+  border-radius: 10px !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none !important;
+  border-color: var(--brand-yellow-500) !important;
+  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2) !important;
+}
+
+button,
+.btn,
+a[role="button"] {
+  border-radius: 10px !important;
+}
+
+button.bg-blue-500,
+button.bg-blue-600,
+.bg-blue-500,
+.bg-blue-600 {
+  background-color: var(--brand-blue-600) !important;
+}
+
+button.hover\:bg-blue-600:hover,
+button.hover\:bg-blue-700:hover,
+.hover\:bg-blue-600:hover,
+.hover\:bg-blue-700:hover {
+  background-color: #185cb0 !important;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2f66ab;
+  border-radius: 12px;
+}

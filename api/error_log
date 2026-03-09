@@ -1,0 +1,109 @@
+[18-Feb-2026 04:16:19 UTC] PHP Warning:  mysqli::__construct(): (HY000/3118): Access denied for user 'kxbbdzjs_Roland1'@'localhost'. Account is locked. in /home/kxbbdzjs/public_html/config/database.php on line 8
+[02-Mar-2026 17:32:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New SUPPOR...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/support.php(189): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:32:26 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New SUPPOR...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/support.php(189): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:32:48 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New SUPPOR...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/support.php(189): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:32:56 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New SUPPOR...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/support.php(189): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:33:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New INSTAL...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/solar_requests.php(108): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:33:53 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New INSTAL...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/solar_requests.php(108): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:34:09 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New INSTAL...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/solar_requests.php(108): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:35:59 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New INSTAL...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/solar_requests.php(108): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:36:12 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New SUPPOR...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/support.php(189): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:42:39 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New SUPPOR...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/support.php(189): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:42:43 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New SUPPOR...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/support.php(189): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:47:29 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New INSTAL...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/solar_requests.php(108): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:47:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New INSTAL...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/solar_requests.php(108): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:54:20 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New INSTAL...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/solar_requests.php(108): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:54:26 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New INSTAL...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/solar_requests.php(108): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:55:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New INSTAL...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/solar_requests.php(108): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[02-Mar-2026 17:55:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New SUPPOR...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/support.php(189): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93
+[03-Mar-2026 08:04:31 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mail() in /home/kxbbdzjs/public_html/includes/support_workflow.php:93
+Stack trace:
+#0 /home/kxbbdzjs/public_html/includes/support_workflow.php(127): dd_support_send_mail('Rolandfelix70@g...', '[DD] New INSTAL...', 'A new request w...')
+#1 /home/kxbbdzjs/public_html/api/solar_requests.php(109): dd_support_notify_admin_new_request(Array)
+#2 {main}
+  thrown in /home/kxbbdzjs/public_html/includes/support_workflow.php on line 93

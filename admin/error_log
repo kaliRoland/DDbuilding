@@ -1,0 +1,1 @@
+[03-Mar-2026 12:32:16 UTC] PHP Warning:  mysqli::__construct(): (HY000/1040): Too many connections in /home/kxbbdzjs/public_html/config/database.php on line 8

@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const productsTbody = document.getElementById('products-tbody');
     const addProductBtn = document.getElementById('add-product-btn');
+    const addProductBtns = document.querySelectorAll('#add-product-btn');
     const productModal = document.getElementById('product-modal');
     const modalTitle = document.getElementById('modal-title');
     const productForm = document.getElementById('product-form');
@@ -16,6 +17,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
     const addCategoryBtn = document.getElementById('add-category-btn');
     const exportCsvBtn = document.getElementById('export-csv-btn');
+    const imageInputs = document.querySelectorAll('#product-form input[type="file"]');
+
+    const MAX_FILE_BYTES = 2 * 1024 * 1024; // 2MB per file
+    const MAX_TOTAL_BYTES = 8 * 1024 * 1024; // 8MB total (matches typical post_max_size)
+    const formatBytes = (bytes) => {
+        const mb = bytes / (1024 * 1024);
+        return `${mb.toFixed(2)}MB`;
+    };
+    const validateImageSizes = () => {
+        let total = 0;
+        let tooLarge = false;
+        imageInputs.forEach(input => {
+            if (input.files && input.files.length > 0) {
+                const file = input.files[0];
+                total += file.size;
+                if (file.size > MAX_FILE_BYTES) {
+                    tooLarge = true;
+                    alert(`"${file.name}" is ${formatBytes(file.size)}. Max per image is ${formatBytes(MAX_FILE_BYTES)}.`);
+                    input.value = '';
+                }
+            }
+        });
+        if (total > MAX_TOTAL_BYTES) {
+            alert(`Total upload size is ${formatBytes(total)}. Please keep it under ${formatBytes(MAX_TOTAL_BYTES)}.`);
+            return false;
+        }
+        return !tooLarge;
+    };
 
     const API_URL = 'api.php';
     let currentPage = 1;
@@ -29,8 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
         productForm.reset();
         productIdInput.value = '';
 
-        const fields = productForm.querySelectorAll('input, textarea');
-        fields.forEach(field => field.readOnly = false);
+        // Ensure all form controls (inputs, textareas, selects) are editable by default
+        const fields = productForm.querySelectorAll('input, textarea, select');
+        fields.forEach(field => {
+            if (field.tagName.toLowerCase() === 'select') field.disabled = false;
+            field.readOnly = false;
+        });
+
+        // Populate category select for the modal
+        fetchCategories().then(categories => populateModalCategorySelect(categories));
 
         const fileInputs = productForm.querySelectorAll('input[type="file"]');
         fileInputs.forEach(input => input.closest('div').style.display = 'block');
@@ -62,12 +98,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const category = categoryFilter.value;
         const maxPrice = priceFilter.value;
         
-        const url = new URL(API_URL, window.location.origin + window.location.pathname.replace('products.php', ''));
-        url.searchParams.append('action', 'get_products');
-        url.searchParams.append('page', currentPage);
-        if (search) url.searchParams.append('search', search);
-        if (category) url.searchParams.append('category', category);
-        if (maxPrice < priceFilter.max) url.searchParams.append('max_price', maxPrice);
+        const params = new URLSearchParams({
+            action: 'get_products',
+            page: currentPage
+        });
+        if (search) params.append('search', search);
+        if (category) params.append('category', category);
+        if (maxPrice < priceFilter.max) params.append('max_price', maxPrice);
+        
+        const url = `api.php?${params.toString()}`;
 
         try {
             const response = await fetch(url);
@@ -87,13 +126,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Fetch categories (returns array of objects {id,name,parent_id}) for modal selects
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch(`${API_URL}?action=get_categories`);
+            const data = await response.json();
+            if (data.status === 'success') return data.categories;
+        } catch (error) {
+            console.error('Failed to fetch categories:', error);
+        }
+        return [];
+    };
+
     const saveProduct = async (formData) => {
         try {
             const response = await fetch(`${API_URL}?action=save_product`, {
                 method: 'POST',
                 body: formData
             });
-            const data = await response.json();
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (err) {
+                console.error('Failed to save product: server returned non-JSON:', text);
+                alert('Server returned an unexpected response. See console for details.');
+                return;
+            }
 
             if (data.status === 'success') {
                 hideModal();
@@ -155,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderProducts = (products) => {
         productsTbody.innerHTML = '';
         if (products.length === 0) {
-            productsTbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-slate-500">No products found.</td></tr>';
+            productsTbody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-slate-500">No products found.</td></tr>';
             return;
         }
         products.forEach(product => {
@@ -170,7 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${product.image_main ? `<img src="../${product.image_main}" alt="${escapeHTML(product.name)}" class="h-10 w-10 object-cover rounded-md">` : ''}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">${escapeHTML(product.name)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">${escapeHTML(product.category)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">${escapeHTML(product.main_category || product.category)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">${escapeHTML(product.subcategory || '')}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">₦${parseFloat(product.price).toFixed(2)}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
                     <label class="flex items-center cursor-pointer">
@@ -228,13 +288,23 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Event Listeners ---
-    addProductBtn.addEventListener('click', () => showModal('Add New Product'));
-    cancelBtn.addEventListener('click', hideModal);
-
-    productForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        saveProduct(new FormData(productForm));
+    // Use delegated handler so links/buttons (even if added multiple places) open the modal
+    document.addEventListener('click', (e) => {
+        const target = e.target.closest('#add-product-btn, .add-product-btn');
+        if (target) {
+            e.preventDefault();
+            showModal('Add New Product');
+        }
     });
+    if (cancelBtn) cancelBtn.addEventListener('click', hideModal);
+
+    if (productForm) {
+        productForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!validateImageSizes()) return;
+            saveProduct(new FormData(productForm));
+        });
+    }
 
     productsTbody.addEventListener('click', async (e) => {
         const productRow = e.target.closest('.product-row');
@@ -287,17 +357,86 @@ document.addEventListener('DOMContentLoaded', () => {
                 productForm.reset();
                 productIdInput.value = p.id;
                 document.getElementById('name').value = p.name;
-                document.getElementById('category').value = p.category;
+                // populate category select (main + sub) and select current
+                const categories = await fetchCategories();
+                populateModalCategorySelect(categories);
+                // set category_id and selects based on product's category_id or category name
+                const catIdInput = document.getElementById('category_id');
+                const mainSel = document.getElementById('main_category_id');
+                const subSel = document.getElementById('subcategory_id');
+                if (p.category_id) {
+                    catIdInput.value = p.category_id;
+                    // find category object to determine parent
+                    const catObj = categories.find(c => String(c.id) === String(p.category_id));
+                    if (catObj) {
+                        if (catObj.parent_id) {
+                            mainSel.value = catObj.parent_id;
+                            // trigger populate subs
+                            mainSel.dispatchEvent(new Event('change'));
+                            subSel.value = catObj.name;
+                            const sel = Array.from(subSel.options).find(o => o.value === catObj.name);
+                            if (sel && sel.dataset && sel.dataset.id) catIdInput.value = sel.dataset.id;
+                        } else {
+                            mainSel.value = catObj.id;
+                            catIdInput.value = catObj.id;
+                        }
+                    }
+                } else if (p.category) {
+                    // fallback by name
+                    // try to find by name among categories
+                    const byName = categories.find(c => c.name === p.category);
+                    if (byName) {
+                        catIdInput.value = byName.id;
+                        if (byName.parent_id) {
+                            mainSel.value = byName.parent_id;
+                            mainSel.dispatchEvent(new Event('change'));
+                            subSel.value = byName.name;
+                            const sel = Array.from(subSel.options).find(o => o.value === byName.name);
+                            if (sel && sel.dataset && sel.dataset.id) catIdInput.value = sel.dataset.id;
+                        } else {
+                            mainSel.value = byName.id;
+                            catIdInput.value = byName.id;
+                        }
+                    }
+                }
                 document.getElementById('price').value = p.price;
+                // brand and tags
+                if (document.getElementById('brand')) document.getElementById('brand').value = p.brand || '';
+                if (document.getElementById('tags')) document.getElementById('tags').value = p.tags || '';
                 document.getElementById('description').value = p.description;
+                document.getElementById('is_featured').checked = p.is_featured == 1 ? true : false;
 
-                // Make fields read-only
-                const fields = productForm.querySelectorAll('input, textarea');
-                fields.forEach(field => field.readOnly = true);
+                // Make fields read-only (include selects)
+                const fields = productForm.querySelectorAll('input, textarea, select');
+                fields.forEach(field => {
+                    if (field.tagName.toLowerCase() === 'select') field.disabled = true;
+                    else field.readOnly = true;
+                });
 
                 // Hide file inputs
                 const fileInputs = productForm.querySelectorAll('input[type="file"]');
                 fileInputs.forEach(input => input.closest('div').style.display = 'none');
+
+                // Populate specifications if present
+                try {
+                    const specsContainer = document.getElementById('specifications-container');
+                    if (specsContainer) {
+                        specsContainer.innerHTML = '';
+                        const specs = (typeof p.specifications === 'string') ? JSON.parse(p.specifications || '[]') : (p.specifications || []);
+                        if (specs.length === 0) {
+                            specsContainer.innerHTML = `<div class="spec-row grid grid-cols-2 gap-4 mb-2">\n                                <input type="text" name="spec_title[]" placeholder="Specification Title" class="bg-slate-700 text-white rounded px-3 py-2 focus:outline-none focus:border-amber-500 border-2 border-transparent">\n                                <input type="text" name="spec_detail[]" placeholder="Specification Detail" class="bg-slate-700 text-white rounded px-3 py-2 focus:outline-none focus:border-amber-500 border-2 border-transparent">\n                            </div>`;
+                        } else {
+                            specs.forEach(s => {
+                                const row = document.createElement('div');
+                                row.className = 'spec-row grid grid-cols-2 gap-4 mb-2';
+                                row.innerHTML = `<input type="text" name="spec_title[]" value="${escapeHTML(s.title)}" placeholder="Specification Title" class="bg-slate-700 text-white rounded px-3 py-2 focus:outline-none focus:border-amber-500 border-2 border-transparent">\n                                    <input type="text" name="spec_detail[]" value="${escapeHTML(s.detail)}" placeholder="Specification Detail" class="bg-slate-700 text-white rounded px-3 py-2 focus:outline-none focus:border-amber-500 border-2 border-transparent">`;
+                                specsContainer.appendChild(row);
+                            });
+                        }
+                    }
+                } catch (err) {
+                    console.error('Failed to parse specifications:', err);
+                }
 
 
                 const modalFooter = productForm.querySelector('.flex.justify-end');
@@ -312,7 +451,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 document.getElementById('close-popup-btn').addEventListener('click', hideModal);
                 document.getElementById('edit-popup-btn').addEventListener('click', () => {
-                    fields.forEach(field => field.readOnly = false);
+                    fields.forEach(field => {
+                        if (field.tagName.toLowerCase() === 'select') field.disabled = false;
+                        else field.readOnly = false;
+                    });
                     fileInputs.forEach(input => input.closest('div').style.display = 'block');
                     modalFooter.innerHTML = `
                         <button type="button" id="cancel-btn" class="bg-slate-600 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded transition">
@@ -344,17 +486,76 @@ document.addEventListener('DOMContentLoaded', () => {
                 productForm.reset();
                 productIdInput.value = p.id;
                 document.getElementById('name').value = p.name;
-                document.getElementById('category').value = p.category;
+                const categories = await fetchCategories();
+                populateModalCategorySelect(categories);
+                const catIdInput = document.getElementById('category_id');
+                const mainSel = document.getElementById('main_category_id');
+                const subSel = document.getElementById('subcategory_id');
+                if (p.category_id) {
+                    catIdInput.value = p.category_id;
+                    const catObj = categories.find(c => String(c.id) === String(p.category_id));
+                    if (catObj) {
+                        if (catObj.parent_id) {
+                            mainSel.value = catObj.parent_id;
+                            mainSel.dispatchEvent(new Event('change'));
+                            subSel.value = catObj.name;
+                            const sel = Array.from(subSel.options).find(o => o.value === catObj.name);
+                            if (sel && sel.dataset && sel.dataset.id) catIdInput.value = sel.dataset.id;
+                        } else {
+                            mainSel.value = catObj.id;
+                            catIdInput.value = catObj.id;
+                        }
+                    }
+                } else if (p.category) {
+                    const byName = categories.find(c => c.name === p.category);
+                    if (byName) {
+                        catIdInput.value = byName.id;
+                        if (byName.parent_id) {
+                            mainSel.value = byName.parent_id;
+                            mainSel.dispatchEvent(new Event('change'));
+                            subSel.value = byName.id;
+                        } else {
+                            mainSel.value = byName.id;
+                        }
+                    }
+                }
                 document.getElementById('price').value = p.price;
+                if (document.getElementById('brand')) document.getElementById('brand').value = p.brand || '';
+                if (document.getElementById('tags')) document.getElementById('tags').value = p.tags || '';
                 document.getElementById('description').value = p.description;
+                document.getElementById('is_featured').checked = p.is_featured == 1 ? true : false;
 
-                // Ensure fields are editable
-                const fields = productForm.querySelectorAll('input, textarea');
-                fields.forEach(field => field.readOnly = false);
+                // Ensure fields are editable (include selects)
+                const fields = productForm.querySelectorAll('input, textarea, select');
+                fields.forEach(field => {
+                    if (field.tagName.toLowerCase() === 'select') field.disabled = false;
+                    else field.readOnly = false;
+                });
 
                 // Show file inputs
                 const fileInputs = productForm.querySelectorAll('input[type="file"]');
                 fileInputs.forEach(input => input.closest('div').style.display = 'block');
+
+                // Populate specifications for edit
+                try {
+                    const specsContainer = document.getElementById('specifications-container');
+                    if (specsContainer) {
+                        specsContainer.innerHTML = '';
+                        const specs = (typeof p.specifications === 'string') ? JSON.parse(p.specifications || '[]') : (p.specifications || []);
+                        if (specs.length === 0) {
+                            specsContainer.innerHTML = `<div class="spec-row grid grid-cols-2 gap-4 mb-2">\n                                <input type="text" name="spec_title[]" placeholder="Specification Title" class="bg-slate-700 text-white rounded px-3 py-2 focus:outline-none focus:border-amber-500 border-2 border-transparent">\n                                <input type="text" name="spec_detail[]" placeholder="Specification Detail" class="bg-slate-700 text-white rounded px-3 py-2 focus:outline-none focus:border-amber-500 border-2 border-transparent">\n                            </div>`;
+                        } else {
+                            specs.forEach(s => {
+                                const row = document.createElement('div');
+                                row.className = 'spec-row grid grid-cols-2 gap-4 mb-2';
+                                row.innerHTML = `<input type="text" name="spec_title[]" value="${escapeHTML(s.title)}" placeholder="Specification Title" class="bg-slate-700 text-white rounded px-3 py-2 focus:outline-none focus:border-amber-500 border-2 border-transparent">\n                                    <input type="text" name="spec_detail[]" value="${escapeHTML(s.detail)}" placeholder="Specification Detail" class="bg-slate-700 text-white rounded px-3 py-2 focus:outline-none focus:border-amber-500 border-2 border-transparent">`;
+                                specsContainer.appendChild(row);
+                            });
+                        }
+                    }
+                } catch (err) {
+                    console.error('Failed to parse specifications for edit:', err);
+                }
 
                 // Replace modal footer with Save/Cancel
                 const modalFooter = productForm.querySelector('.flex.justify-end');
@@ -372,6 +573,75 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Failed to fetch product details for edit:', error);
+        }
+    };
+
+    const populateModalCategorySelect = (categories) => {
+        // categories: array of {id,name,parent_id}
+        const mainSel = document.getElementById('main_category_id');
+        const subSel = document.getElementById('subcategory_id');
+        if (!mainSel || !subSel) return;
+
+        // build map of main categories
+        const mains = categories.filter(c => c.parent_id === null || c.parent_id === '0' || c.parent_id === 0);
+        // Clear mains
+        while (mainSel.options.length > 1) mainSel.remove(1);
+        mains.forEach(m => {
+            const opt = new Option(m.name, m.id);
+            mainSel.add(opt);
+        });
+
+        // When main changes, populate subs
+        mainSel.addEventListener('change', () => {
+            const pid = mainSel.value;
+            // clear subs
+            while (subSel.options.length > 1) subSel.remove(1);
+            if (!pid) {
+                document.getElementById('category_id').value = '';
+                return;
+            }
+            categories.forEach(c => {
+                if (String(c.parent_id) === String(pid)) {
+                    const opt = new Option(c.name, c.name);
+                    opt.dataset.id = c.id;
+                    subSel.add(opt);
+                }
+            });
+            // set category_id to main by default (will be overridden if sub selected)
+            document.getElementById('category_id').value = pid;
+        });
+
+        // When sub selected, set category_id hidden
+        subSel.addEventListener('change', () => {
+            const sel = subSel.options[subSel.selectedIndex];
+            if (sel && sel.dataset && sel.dataset.id) {
+                document.getElementById('category_id').value = sel.dataset.id;
+            } else {
+                // if no sub selected but main selected, set category_id to main
+                const mid = mainSel.value;
+                document.getElementById('category_id').value = mid || '';
+            }
+        });
+
+        // If there is already a selected value in the form, try to preserve it
+        const existingCatId = document.getElementById('category_id').value;
+        if (existingCatId) {
+            // find parent
+            const catObj = categories.find(c => String(c.id) === String(existingCatId));
+                if (catObj) {
+                if (catObj.parent_id) {
+                    mainSel.value = catObj.parent_id;
+                    // trigger populate subs
+                    const event = new Event('change');
+                    mainSel.dispatchEvent(event);
+                    subSel.value = catObj.name;
+                    const sel = Array.from(subSel.options).find(o => o.value === catObj.name);
+                    if (sel && sel.dataset && sel.dataset.id) document.getElementById('category_id').value = sel.dataset.id;
+                } else {
+                    mainSel.value = catObj.id;
+                    document.getElementById('category_id').value = catObj.id;
+                }
+            }
         }
     };
 
@@ -452,6 +722,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     priceFilter.addEventListener('input', () => { priceValue.textContent = `₦${priceFilter.value}`; });
     priceFilter.addEventListener('change', () => { getProducts(1); });
+
+    imageInputs.forEach(input => {
+        input.addEventListener('change', validateImageSizes);
+    });
 
     // --- Utility ---
     const escapeHTML = (str) => {

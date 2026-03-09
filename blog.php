@@ -8,7 +8,7 @@ include 'includes/header.php';
         <h1 class="text-4xl lg:text-5xl font-bold text-white mb-8 text-center">Blog</h1>
         
         <div id="all-blog-posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- All blog posts will be injected here by JavaScript -->
+            <!-- Blog posts will be fetched from WordPress REST API and injected here -->
         </div>
     </div>
 </main>
